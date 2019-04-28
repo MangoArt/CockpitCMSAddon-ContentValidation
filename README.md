@@ -16,7 +16,7 @@ To Implement
 
 The AddOn adds a new menu item item "Content Validation". Navigating to it you will see a list of errors identified 
 
-![Alt text](https://raw.github.com/MangoArt/CockpitCMSAddon-ContentValidation/master/docs/screenshot_cockpit_cms_content_validation.png?sanitize=true)
+![Alt text](https://raw.github.com/MangoArt/CockpitCMSAddon-ContentValidation/master/docs/screenshot_cockpit_cms_content_validation.png?raw=true)
 
 Currently the plugin detects the following errors:
  - Required fields that are empty (can happen if the required attribute was added later)
