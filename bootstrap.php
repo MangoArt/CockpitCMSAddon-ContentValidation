@@ -33,7 +33,7 @@ if (COCKPIT_ADMIN && !COCKPIT_API_REQUEST) {
             $errors = [];
             $collections = $this->app->module('collections')->collections();
             foreach ($collections as $name => $collection) {
-                $errors = $this->validateCollection($name, $collection);
+                $errors = array_merge($errors, $this->validateCollection($name, $collection));
             }
             return $errors;
         },
@@ -45,7 +45,7 @@ if (COCKPIT_ADMIN && !COCKPIT_API_REQUEST) {
             $errors = [];
 
             foreach($items as $item) {
-                $errors = array_merge($errors, $this->validateFields($this->app, $name, $fields, $item));
+                $errors = array_merge($errors, $this->validateFields($name, $fields, $item));
             }
             return $errors;
         },
@@ -62,35 +62,48 @@ if (COCKPIT_ADMIN && !COCKPIT_API_REQUEST) {
             foreach($fields as $field) {
                 $errors = array_merge($errors, $this->validateField($field, $data[$field['name']], $errorData));
             }
-
             return $errors;
         },
 
-        'validateField' => function($field, $fieldData, $errorData) {
+        'validateField' => function($field, $fieldData, $errorData, $inRepeater = false, $debug = false) {
             $errors = [];
             if (array_key_exists('required', $field) && $field['required'] && !$fieldData) {
                 $errors []= array_merge([
                     'violationtype' => 'Error',
-                    'violation' => 'Required field ' . $field['label'] . ' [' . $field['name'] . '] does not have a value'
+                    'violation' => 'Required field ' . $field['label'] . ' [' . ($field['name'] ?? 'no-name') . '] does not have a value'
                 ], $errorData);
             }
 
-            if ($field['type'] === 'image' && $fieldData) {
-                array_merge($errors, $this->validateImageField($field, $fieldData, $errorData));
-            } else if ($field['type'] === 'collectionlink' && $fieldData) {
-                array_merge($errors, $this->validateCollectionLinkField($field, $fieldData, $errorData));
+            if ($inRepeater && !$fieldData) {
+                $errors []= array_merge([
+                    'violationtype' => 'Error',
+                    'violation' => 'An entry in repeater Field ' . $field['label'] . ' [' . ($field['name'] ?? 'no-name') . '] does not have a value'
+                ], $errorData);
             }
-
+            if ($field['type'] === 'image') {
+                $errors = array_merge($errors, $this->validateImageField($field, $fieldData, $errorData, $inRepeater, $debug));
+            } else if ($field['type'] === 'collectionlink' && $fieldData) {
+                $errors = array_merge($errors, $this->validateCollectionLinkField($field, $fieldData, $errorData));
+            } else if ($field['type'] === 'repeater' && count($fieldData) > 0) {
+                $errors = array_merge($errors, $this->validateRepeaterField($field, $fieldData, $errorData, $debug));
+            } else if ($field['type'] === 'set' && $fieldData) {
+                $errors = array_merge($errors, $this->validateSetField($field, $fieldData, $errorData));
+            }
             return $errors;
         },
 
-        'validateImageField' => function($field, $fieldData, $errorData) {
+        'validateImageField' => function($field, $fieldData, $errorData, $inRepeater, $debug) {
             $errors = [];
             $path = $fieldData['path'];
             if (empty($path) && $field['required']) {
-                $errors []= array_merge([
+                $errors [] = array_merge([
                     'violationtype' => 'Error',
                     'violation' => 'Required field ' . $field['label'] . ' [' . $field['name'] . '] does not have a image path specified'
+                ], $errorData);
+            } else if (empty($path) && $inRepeater) {
+                $errors []= array_merge([
+                    'violationtype' => 'Error',
+                    'violation' => 'Image field ' . $field['label'] . ' [' . $field['name'] . '] in repeater does not have an image path specified'
                 ], $errorData);
             } else if (stripos($path, 'http') === 0) {
                 if (!is_url_exist($path)) {
@@ -148,6 +161,22 @@ if (COCKPIT_ADMIN && !COCKPIT_API_REQUEST) {
                         'violation' => 'Field ' . $field['label'] . ' [' . $field['name'] . '] contains a link to a collection item that doesn\'t exist any more!'
                     ], $errorData);
                 }
+            }
+            return $errors;
+        },
+
+        'validateRepeaterField' => function($field, $fieldData, $errorData, $debug = false) {
+            $errors = [];
+            foreach ($fieldData as $repeaterEntry) {
+                $errors = array_merge($errors, $this->validateField($field['options']['field'], $repeaterEntry['value'], $errorData, true, $debug));
+            }
+            return $errors;
+        },
+
+        'validateSetField' => function($field, $fieldData, $errorData) {
+            $errors = [];
+            foreach($field['options']['fields'] as $subField) {
+                $errors = array_merge($errors, $this->validateField($subField, $fieldData[$subField['name']], $errorData, false, false));
             }
             return $errors;
         },
