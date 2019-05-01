@@ -5,7 +5,7 @@ This addon examines all collection items for common error patterns and displays 
 ## Installation
 
 1. Confirm that you have Cockpit CMS (Next branch) installed and working.
-2. Download zip and extract to 'your-cockpit-docroot/addons' (e.g. cockpitcms/addons/ErrorCheck, the addon folder name must be ErrorCheck)
+2. Download zip and extract to 'your-cockpit-docroot/addons' (e.g. cockpitcms/addons/ContentValidation, the addon folder name must be ErrorCheck)
 3. Confirm that the ContentValidation icon appears on the top left of the modules menu.
 
 ### Permissions

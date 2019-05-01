@@ -1,6 +1,6 @@
 <?php
 
-namespace ErrorCheck\Controller;
+namespace ContentValidation\Controller;
 
 use Cockpit\AuthController;
 
@@ -15,11 +15,11 @@ class Admin extends AuthController
    */
   public function index()
   {
-    if (!$this->app->module('cockpit')->hasaccess('errorcheck', 'manage.view')) {
+    if (!$this->app->module('cockpit')->hasaccess('contentvalidation', 'manage.view')) {
       return false;
     }
 
-    $validationMessages = $this->app->module('errorcheck')->validate();
+    $validationMessages = $this->app->module('contentvalidation')->validate();
 
     $dataToDisplay = [];
     foreach ($validationMessages as $error) {
@@ -30,7 +30,7 @@ class Admin extends AuthController
         $dataToDisplay[$type] []= $error;
     }
 
-    return $this->render('errorcheck:views/errorcheck/index.php', [
+    return $this->render('contentvalidation:views/contentvalidation/index.php', [
       'violations' => $dataToDisplay ?? [],
     ]);
   }

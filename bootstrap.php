@@ -23,7 +23,7 @@ function is_url_exist($url){
 // Include addon functions only if its an admin request.
 if (COCKPIT_ADMIN && !COCKPIT_API_REQUEST) {
     // Extend addon functions.
-    $this->module('errorcheck')->extend([
+    $this->module('contentvalidation')->extend([
         'validate' => function () {
             $errors = $this->validateCollections();
             return $errors;

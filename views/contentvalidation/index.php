@@ -17,7 +17,7 @@
     </div>
 
     <div class="uk-text-large uk-text-center uk-margin-large-top uk-text-muted" show="{ !loading && !hasViolations}">
-        <img class="uk-svg-adjust" src="@url('errorcheck:icon.svg')" width="100" height="100" alt="@lang('Netlify Deploys')" data-uk-svg />
+        <img class="uk-svg-adjust" src="@url('contentvalidation:icon.svg')" width="100" height="100" alt="@lang('Content Validation')" data-uk-svg />
         <p>@lang('No violations found')</p>
     </div>
 
