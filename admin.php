@@ -8,14 +8,13 @@
  // Module ACL definitions.
 $this("acl")->addResource('contentvalidation', [
   'manage.view',
-  'manage.deploy',
 ]);
 
 $app->on('admin.init', function () use ($app) {
   // Bind admin routes.
   $this->bindClass('ContentValidation\\Controller\\Admin', 'contentvalidation');
 
-  if ($app->module('cockpit')->hasaccess('contentvalidation', 'errorcheck.view')) {
+  // if ($app->module('cockpit')->hasaccess('contentvalidation', 'manage.view')) {
     // Add to modules menu.
     $this('admin')->addMenuItem('modules', [
       'label' => 'Content Validation',
@@ -23,5 +22,5 @@ $app->on('admin.init', function () use ($app) {
       'route' => '/contentvalidation',
       'active' => strpos($this['route'], '/contentvalidation') === 0,
     ]);
-  }
+  // }
 });

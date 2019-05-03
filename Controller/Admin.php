@@ -15,9 +15,9 @@ class Admin extends AuthController
    */
   public function index()
   {
-    if (!$this->app->module('cockpit')->hasaccess('contentvalidation', 'manage.view')) {
+    /* if (!$this->app->module('cockpit')->hasaccess('contentvalidation', 'manage.view')) {
       return false;
-    }
+    } */
 
     $validationMessages = $this->app->module('contentvalidation')->validate();
 

@@ -106,7 +106,6 @@
       $this.loading = false;
       $this.modal = UIkit.modal(App.$('.uk-modal-details', this.root), {modal:true});
     });
-
   </script>
 
 </div>
